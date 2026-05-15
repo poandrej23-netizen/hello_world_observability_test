@@ -4,8 +4,8 @@
 
 set -e
 
-NAMESPACE="${1:-hello_world_app}"
-SERVICE="${2:-hello_world_app}"
+NAMESPACE="${1:-hello-app}"
+SERVICE="${2:-hello-app}"
 DURATION="${3:-60}"  # секунд
 
 echo "Generating load for ${SERVICE}.${NAMESPACE} for ${DURATION}s..."
