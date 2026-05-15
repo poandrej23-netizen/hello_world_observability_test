@@ -9,7 +9,7 @@ metadata:
 spec:
   selector:
     matchLabels:
-      {{- include "hello-app.selectorLabels" . | nindent 6 }}
+      {{- include "hello_world_app.selectorLabels" . | nindent 6 }}
   namespaceSelector:
     matchNames:
       - {{ .Release.Namespace }}
