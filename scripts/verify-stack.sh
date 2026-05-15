@@ -4,9 +4,9 @@
 
 set -e
 
-APP_NAMESPACE="${1:-hello_world_app}"
+APP_NAMESPACE="${1:-hello-app}"
 MONITORING_NAMESPACE="${2:-monitoring}"
-APP_RELEASE="${3:-hello_world_app}"
+APP_RELEASE="${3:-hello-app}"
 MONITORING_RELEASE="${4:-monitoring}"
 
 RED='\033[0;31m'
@@ -24,10 +24,10 @@ check() {
     
     echo -n "Checking: $desc ... "
     if eval "$cmd" &>/dev/null; then
-        echo -e "${GREEN}✓ PASS${NC}"
+        echo -e "${GREEN} PASS${NC}"
         return 0
     else
-        echo -e "${RED}✗ FAIL${NC}"
+        echo -e "${RED} FAIL${NC}"
         return 1
     fi
 }
@@ -75,7 +75,7 @@ kubectl port-forward -n "$MONITORING_NAMESPACE" svc/"${MONITORING_RELEASE}-prome
 PF_PID=$!
 sleep 5
 
-check "Target appears in Prometheus" "curl -s http://localhost:19090/api/v1/targets | jq -e '.data.activeTargets[] | select(.labels.job | contains(\"hello_world_app\")) | .health == \"up\"'"
+check "Target appears in Prometheus" "curl -s http://localhost:19090/api/v1/targets | jq -e '.data.activeTargets[] | select(.labels.job | contains(\"hello-app\")) | .health == \"up\"'"
 
 kill $PF_PID 2>/dev/null || true
 echo ""
@@ -83,19 +83,19 @@ echo ""
 # 6. Проверка Grafana
 log_info "Phase 6: Grafana Dashboards"
 check "Grafana service is running" "kubectl get pods -n $MONITORING_NAMESPACE -l app.kubernetes.io/name=grafana | grep -q Running"
-check "Dashboard provisioned" "kubectl exec -n $MONITORING_NAMESPACE -l app.kubernetes.io/name=grafana -- cat /var/lib/grafana/dashboards/default/hello_world_app-dashboard.json &>/dev/null || kubectl get configmap -n $MONITORING_NAMESPACE | grep -q dashboard"
+check "Dashboard provisioned" "kubectl exec -n $MONITORING_NAMESPACE -l app.kubernetes.io/name=grafana -- cat /var/lib/grafana/dashboards/default/hello-app-dashboard.json &>/dev/null || kubectl get configmap -n $MONITORING_NAMESPACE | grep -q dashboard"
 echo ""
 
 # 7. Проверка Alertmanager
 log_info "Phase 7: Alertmanager Configuration"
 check "Alertmanager is running" "kubectl get pods -n $MONITORING_NAMESPACE -l app.kubernetes.io/name=alertmanager | grep -q Running"
-check "Alert rules loaded" "kubectl port-forward -n $MONITORING_NAMESPACE svc/${MONITORING_RELEASE}-alertmanager 19093:9093 &>/dev/null & sleep 3 && curl -s http://localhost:19093/api/v2/status | grep -q 'hello_world_app' && kill $! 2>/dev/null || true"
+check "Alert rules loaded" "kubectl port-forward -n $MONITORING_NAMESPACE svc/${MONITORING_RELEASE}-alertmanager 19093:9093 &>/dev/null & sleep 3 && curl -s http://localhost:19093/api/v2/status | grep -q 'hello-app' && kill $! 2>/dev/null || true"
 echo ""
 
 # 8. Helm lint
 log_info "Phase 8: Helm Chart Validation"
-check "helm lint passes" "helm lint ./helm/hello_world_app"
-check "helm template renders successfully" "helm template hello_world_app ./helm/hello_world_app -n $APP_NAMESPACE | grep -q 'ServiceMonitor'"
+check "helm lint passes" "helm lint ./helm/hello-app"
+check "helm template renders successfully" "helm template hello-app ./helm/hello-app -n $APP_NAMESPACE | grep -q 'ServiceMonitor'"
 echo ""
 
 echo " Quick Access Commands:"
