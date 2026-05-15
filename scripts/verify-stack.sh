@@ -73,8 +73,7 @@ echo ""
 
 # 5. Проверка Prometheus discovery
 log_info "Phase 5: Prometheus Target Discovery"
-PROM_SVC=$(kubectl get svc -n "$MONITORING_NAMESPACE" -l app.kubernetes.io/name=prometheus -o jsonpath='{.items[0].metadata.name}')
-kubectl port-forward -n "$MONITORING_NAMESPACE" svc/"$PROM_SVC" 19090:9090 &>/dev/null &
+kubectl port-forward -n "$MONITORING_NAMESPACE" svc/"${MONITORING_RELEASE}-kube-prometheus-prometheus" 19090:9090 &>/dev/null &
 PF_PID=$!
 sleep 5
 
