@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "hello_world_app.fullname" . }}
+  labels:
+    {{- include "hello_world_app.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - port: {{ .Values.service.port }}
+      targetPort: {{ .Values.service.targetPort }}
+      protocol: TCP
+      name: {{ .Values.service.portName }} 
+  selector:
+    {{- include "hello_world_app.selectorLabels" . | nindent 4 }}
