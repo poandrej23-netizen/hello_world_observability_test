@@ -1,0 +1,198 @@
+prometheus:
+  prometheusSpec:
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorNamespaceSelector: {}  
+    
+    podMonitorSelectorNilUsesHelmValues: false
+    ruleSelectorNilUsesHelmValues: false
+    ruleNamespaceSelector: {}
+    
+    resources:
+      requests:
+        cpu: 500m
+        memory: 1Gi
+      limits:
+        memory: 2Gi
+    
+    retention: 15d
+
+
+grafana:
+  enabled: true
+  adminUser: admin
+  adminPassword: "test" 
+  
+  service:
+    type: NodePort
+    nodePort: 32000
+    port: 80
+  
+
+  dashboards:
+    default:
+    
+      prometheus-stats:
+        gnetId: 19105
+        revision: 1
+        datasource: Prometheus
+      
+  
+      hello_world_app-dashboard:
+        json: |
+          {
+            "annotations": {"list": []},
+            "editable": true,
+            "fiscalYearStartMonth": 0,
+            "graphTooltip": 0,
+            "id": null,
+            "links": [],
+            "liveNow": false,
+            "panels": [
+              {
+                "id": 1,
+                "title": "Request Rate",
+                "type": "timeseries",
+                "targets": [
+                  {
+                    "expr": "sum(rate(http_requests_total{job=~\".*hello-app.*\"}[5m])) by (status)",
+                    "legendFormat": "{{status}}"
+                  }
+                ],
+                "fieldConfig": {
+                  "defaults": {"unit": "reqps"}
+                },
+                "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+              },
+              {
+                "id": 2,
+                "title": "Error Rate %",
+                "type": "gauge",
+                "targets": [
+                  {
+                    "expr": "sum(rate(http_requests_total{job=~\".*hello-app.*\", status=~\"5..\"}[5m])) / sum(rate(http_requests_total{job=~\".*hello_world_app.*\"}[5m])) * 100",
+                    "legendFormat": "Error %"
+                  }
+                ],
+                "fieldConfig": {
+                  "defaults": {
+                    "unit": "percent",
+                    "min": 0,
+                    "max": 100,
+                    "thresholds": {
+                      "mode": "absolute",
+                      "steps": [
+                        {"color": "green", "value": null},
+                        {"color": "yellow", "value": 1},
+                        {"color": "red", "value": 5}
+                      ]
+                    }
+                  }
+                },
+                "gridPos": {"h": 8, "w": 6, "x": 12, "y": 0}
+              },
+              {
+                "id": 3,
+                "title": "p95 Latency",
+                "type": "stat",
+                "targets": [
+                  {
+                    "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=~\".*hello-app.*\"}[5m])) by (le))",
+                    "legendFormat": "p95"
+                  }
+                ],
+                "fieldConfig": {
+                  "defaults": {"unit": "s"}
+                },
+                "gridPos": {"h": 8, "w": 6, "x": 18, "y": 0}
+              },
+              {
+                "id": 4,
+                "title": "Active Requests",
+                "type": "stat",
+                "targets": [
+                  {
+                    "expr": "app_active_requests{job=~\".*hello-app.*\"}",
+                    "legendFormat": "Active"
+                  }
+                ],
+                "gridPos": {"h": 8, "w": 6, "x": 0, "y": 8}
+              },
+              {
+                "id": 5,
+                "title": "Health Status",
+                "type": "stat",
+                "targets": [
+                  {
+                    "expr": "app_health_status{job=~\".*hello-app.*\"}",
+                    "legendFormat": "Status"
+                  }
+                ],
+                "fieldConfig": {
+                  "defaults": {
+                    "mappings": [
+                      {"options": {"0": {"text": "Unhealthy"}}, "type": "value"},
+                      {"options": {"1": {"text": "Healthy"}}, "type": "value"}
+                    ],
+                    "color": {"mode": "thresholds"},
+                    "thresholds": {
+                      "mode": "absolute",
+                      "steps": [
+                        {"color": "red", "value": null},
+                        {"color": "green", "value": 1}
+                      ]
+                    }
+                  }
+                },
+                "gridPos": {"h": 8, "w": 6, "x": 6, "y": 8}
+              }
+            ],
+            "refresh": "10s",
+            "schemaVersion": 38,
+            "style": "dark",
+            "tags": ["hello-app", "demo"],
+            "templating": {"list": []},
+            "time": {"from": "now-1h", "to": "now"},
+            "timepicker": {},
+            "timezone": "browser",
+            "title": "hello_world_app Dashboard",
+            "uid": "hello_world_app-demo",
+            "version": 1,
+            "weekStart": ""
+          }
+  
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+      - name: 'default'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/default
+
+
+alertmanager:
+  enabled: true
+  config:
+    global:
+      resolve_timeout: 5m
+    route:
+      group_by: ['alertname', 'severity']
+      group_wait: 30s
+      group_interval: 5m
+      repeat_interval: 4h
+      receiver: 'default'
+      routes:
+        - match:
+            severity: critical
+          receiver: 'critical-alerts'
+    receivers:
+      - name: 'default'
+        webhook_configs:
+          - url: 'http://localhost:8080/alerts' 
+      - name: 'critical-alerts'
+        webhook_configs:
+          - url: 'http://localhost:8080/critical-alerts'
