@@ -37,7 +37,7 @@ grafana:
         datasource: Prometheus
       
   
-      hello_world_app-dashboard:
+      hello-app-dashboard:
         json: |
           {
             "annotations": {"list": []},
@@ -54,7 +54,7 @@ grafana:
                 "type": "timeseries",
                 "targets": [
                   {
-                    "expr": "sum(rate(http_requests_total{job=~\".*hello_world_app.*\"}[5m])) by (status)",
+                    "expr": "sum(rate(http_requests_total{job=~\".*hello-app.*\"}[5m])) by (status)",
                     "legendFormat": "{{status}}"
                   }
                 ],
@@ -69,7 +69,7 @@ grafana:
                 "type": "gauge",
                 "targets": [
                   {
-                    "expr": "sum(rate(http_requests_total{job=~\".*hello_world_app.*\", status=~\"5..\"}[5m])) / sum(rate(http_requests_total{job=~\".*hello_world_app.*\"}[5m])) * 100",
+                    "expr": "sum(rate(http_requests_total{job=~\".*hello-app.*\", status=~\"5..\"}[5m])) / sum(rate(http_requests_total{job=~\".*hello-app.*\"}[5m])) * 100",
                     "legendFormat": "Error %"
                   }
                 ],
