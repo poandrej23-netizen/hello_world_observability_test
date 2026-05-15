@@ -32,9 +32,8 @@ check() {
     fi
 }
 
-echo "🧪 Hello-Observability Verification Protocol"
-echo "============================================"
-echo ""
+echo "Verification"
+
 
 # 1. Проверка установки приложения
 log_info "Phase 1: Application Deployment"
