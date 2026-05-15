@@ -1,6 +1,6 @@
 FROM python:3.11-slim
 
-LABEL maintainer="observability-team@example.com"
+LABEL maintainer="po.andrej23@gmail.com"
 LABEL prometheus_scrape="true"
 LABEL prometheus_path="/metrics"
 LABEL prometheus_port="8080"
