@@ -7,10 +7,10 @@
 - kubectl настроен на целевой кластер
 
 ## Демонстрация работоспособности (screenshots)
-![helm-list](docs/screenshots/screenfirst.jpg)
-![prometheus-targets](docs/screenshots/screensecond.jpg)
-![prometheus-alerts](docs/screenshots/screenthird.jpg)
-![grafana-dashboard](docs/screenshots/screenfourth.jpg)
+![helm-list](screenfirst.jpg)
+![prometheus-targets](screensecond.jpg)
+![prometheus-alerts](screenthird.jpg)
+![grafana-dashboard](screenfourth.jpg)
 
 
 ### 1. Установка monitoring stack
