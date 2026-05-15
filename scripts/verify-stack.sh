@@ -58,7 +58,9 @@ kill $PF_PID 2>/dev/null || true
 # 3. Проверка ServiceMonitor
 log_info "Phase 3: ServiceMonitor CRD"
 check "ServiceMonitor resource exists" "kubectl get servicemonitor $APP_RELEASE -n $APP_NAMESPACE"
-check "ServiceMonitor has correct labels" "kubectl get servicemonitor $APP_RELEASE -n $APP_NAMESPACE -o json | jq -e '.metadata.labels.release == \"monitoring\"'"
+check "ServiceMonitor has correct labels" \
+  "kubectl get servicemonitor $APP_RELEASE -n $APP_NAMESPACE -o jsonpath='{.metadata.labels.release}' | grep -qx 'monitoring'"
+
 check "ServiceMonitor targets correct port" "kubectl get servicemonitor $APP_RELEASE -n $APP_NAMESPACE -o json | jq -e '.spec.endpoints[0].port == \"http\"'"
 echo ""
 
