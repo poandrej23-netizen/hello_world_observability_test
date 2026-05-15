@@ -13,7 +13,7 @@
 ![grafana-dashboard](screenfourth.jpg)
 
 
-### 1. Установка monitoring stack
+### Установка monitoring stack
 
 ```bash
 # Добавить репозиторий
