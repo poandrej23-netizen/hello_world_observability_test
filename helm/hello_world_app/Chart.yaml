@@ -1,0 +1,17 @@
+apiVersion: v2
+name: hello-app
+description: Hello-World приложение с Prometheus-метриками для тестирования observability stack
+type: application
+version: 0.1.0
+appVersion: "1"
+keywords:
+  - observability
+  - prometheus
+  - monitoring
+  - demo
+home: https://github.com/poandrej23-netizen/hello_world_observability_test
+sources:
+  - https://github.com/poandrej23-netizen/hello_world_observability_test
+maintainers:
+  - name: Andrei Popov
+    email: po.andrej23@gmail.com
