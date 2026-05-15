@@ -54,7 +54,7 @@ grafana:
                 "type": "timeseries",
                 "targets": [
                   {
-                    "expr": "sum(rate(http_requests_total{job=~\".*hello-app.*\"}[5m])) by (status)",
+                    "expr": "sum(rate(http_requests_total{job=~\".*hello_world_app.*\"}[5m])) by (status)",
                     "legendFormat": "{{status}}"
                   }
                 ],
@@ -69,7 +69,7 @@ grafana:
                 "type": "gauge",
                 "targets": [
                   {
-                    "expr": "sum(rate(http_requests_total{job=~\".*hello-app.*\", status=~\"5..\"}[5m])) / sum(rate(http_requests_total{job=~\".*hello_world_app.*\"}[5m])) * 100",
+                    "expr": "sum(rate(http_requests_total{job=~\".*hello_world_app.*\", status=~\"5..\"}[5m])) / sum(rate(http_requests_total{job=~\".*hello_world_app.*\"}[5m])) * 100",
                     "legendFormat": "Error %"
                   }
                 ],
@@ -96,7 +96,7 @@ grafana:
                 "type": "stat",
                 "targets": [
                   {
-                    "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=~\".*hello-app.*\"}[5m])) by (le))",
+                    "expr": "histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job=~\".*hello_world_app.*\"}[5m])) by (le))",
                     "legendFormat": "p95"
                   }
                 ],
@@ -111,7 +111,7 @@ grafana:
                 "type": "stat",
                 "targets": [
                   {
-                    "expr": "app_active_requests{job=~\".*hello-app.*\"}",
+                    "expr": "app_active_requests{job=~\".*hello_world_app.*\"}",
                     "legendFormat": "Active"
                   }
                 ],
@@ -123,7 +123,7 @@ grafana:
                 "type": "stat",
                 "targets": [
                   {
-                    "expr": "app_health_status{job=~\".*hello-app.*\"}",
+                    "expr": "app_health_status{job=~\".*hello_world_app.*\"}",
                     "legendFormat": "Status"
                   }
                 ],
@@ -149,7 +149,7 @@ grafana:
             "refresh": "10s",
             "schemaVersion": 38,
             "style": "dark",
-            "tags": ["hello-app", "demo"],
+            "tags": ["hello_world_app", "demo"],
             "templating": {"list": []},
             "time": {"from": "now-1h", "to": "now"},
             "timepicker": {},
