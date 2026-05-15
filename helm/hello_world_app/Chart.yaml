@@ -1,5 +1,5 @@
 apiVersion: v2
-name: hello-app
+name: hello_world_app
 description: Hello-World приложение с Prometheus-метриками для тестирования observability stack
 type: application
 version: 0.1.0
