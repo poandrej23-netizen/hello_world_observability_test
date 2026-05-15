@@ -35,7 +35,6 @@ service:
   type: ClusterIP
   port: 80
   targetPort: 8080
-  # Имя порта КРИТИЧНО для ServiceMonitor!
   portName: http
 
 ingress:
