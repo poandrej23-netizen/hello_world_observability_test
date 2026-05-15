@@ -43,7 +43,7 @@ ingress:
   className: ""
   annotations: {}
   hosts:
-    - host: hello_world_app.local
+    - host: hello-app.local
       paths:
         - path: /
           pathType: Prefix
