@@ -2,13 +2,13 @@
 apiVersion: monitoring.coreos.com/v1
 kind: PrometheusRule
 metadata:
-  name: {{ include "hello_world_app.fullname" . }}-alerts
+  name: {{ include "hello-app.fullname" . }}-alerts
   labels:
-    {{- include "hello_world_app.labels" . | nindent 4 }}
+    {{- include "hello-app.labels" . | nindent 4 }}
     release: monitoring  
 spec:
   groups:
-    - name: {{ include "hello_world_app.fullname" . }}.rules
+    - name: {{ include "hello-app.fullname" . }}.rules
       interval: {{ .Values.metrics.alerts.evaluationInterval }}
       rules:
        
@@ -17,19 +17,19 @@ spec:
             (
               sum(rate(http_requests_total{
                 status=~"5..",
-                job="{{ include "hello_world_app.fullname" . }}",
+                job="{{ include "hello-app.fullname" . }}",
                 namespace="{{ .Release.Namespace }}"
               }[5m]))
               /
               sum(rate(http_requests_total{
-                job="{{ include "hello_world_app.fullname" . }}",
+                job="{{ include "hello-app.fullname" . }}",
                 namespace="{{ .Release.Namespace }}"
               }[5m]))
             ) > {{ .Values.metrics.alerts.errorRateThreshold }}
           for: {{ .Values.metrics.alerts.alertDuration }}
           labels:
             severity: critical
-            app: {{ include "hello_world_app.fullname" . }}
+            app: {{ include "hello-app.fullname" . }}
             team: backend
           annotations:
             summary: "High error rate on {{ `{{ $labels.job }}` }}"
@@ -44,7 +44,7 @@ spec:
           expr: |
             histogram_quantile(0.95,
               sum(rate(http_request_duration_seconds_bucket{
-                job="{{ include "hello_world_app.fullname" . }}",
+                job="{{ include "hello-app.fullname" . }}",
                 namespace="{{ .Release.Namespace }}",
                 endpoint="hello"
               }[5m])) by (le)
@@ -52,7 +52,7 @@ spec:
           for: {{ .Values.metrics.alerts.alertDuration }}
           labels:
             severity: warning
-            app: {{ include "hello_world_app.fullname" . }}
+            app: {{ include "hello-app.fullname" . }}
             team: backend
           annotations:
             summary: "High p95 latency on {{ `{{ $labels.job }}` }}"
@@ -64,11 +64,11 @@ spec:
         
         - alert: HelloAppDown
           expr: |
-            up{job="{{ include "hello_world_app.fullname" . }}", namespace="{{ .Release.Namespace }}"} == 0
+            up{job="{{ include "hello-app.fullname" . }}", namespace="{{ .Release.Namespace }}"} == 0
           for: 2m
           labels:
             severity: critical
-            app: {{ include "hello_world_app.fullname" . }}
+            app: {{ include "hello-app.fullname" . }}
             team: backend
           annotations:
             summary: "Application {{ `{{ $labels.job }}` }} is down"
@@ -80,11 +80,11 @@ spec:
         
         - alert: HelloAppUnhealthy
           expr: |
-            app_health_status{job="{{ include "hello_world_app.fullname" . }}", namespace="{{ .Release.Namespace }}"} == 0
+            app_health_status{job="{{ include "hello-app.fullname" . }}", namespace="{{ .Release.Namespace }}"} == 0
           for: 3m
           labels:
             severity: warning
-            app: {{ include "hello_world_app.fullname" . }}
+            app: {{ include "hello-app.fullname" . }}
           annotations:
             summary: "Application reporting unhealthy status"
             description: "Health endpoint reports degraded status for more than 3 minutes."
